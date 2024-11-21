@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "208511786964",
+    "project_id": "social-media-app-b5ea5",
+    "storage_bucket": "social-media-app-b5ea5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:208511786964:android:37fc32911c8b70d1a7c041",
+        "android_client_info": {
+          "package_name": "app.nada.social_media_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "208511786964-57auk8fib65rdokevuo4dl2j41ejbpnq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxKpDbQNRtDQOpuHjmQ7ZpNE65Y3dgjO0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "208511786964-57auk8fib65rdokevuo4dl2j41ejbpnq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "208511786964-5rj2dhh3e0vau7su5qbvs87lfqvod2r0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.mycompany.socialmediaapp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:208511786964:android:684c650cbc3ab1c7a7c041",
+        "android_client_info": {
+          "package_name": "com.mycompany.socialmediaapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "208511786964-57auk8fib65rdokevuo4dl2j41ejbpnq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxKpDbQNRtDQOpuHjmQ7ZpNE65Y3dgjO0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "208511786964-57auk8fib65rdokevuo4dl2j41ejbpnq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "208511786964-5rj2dhh3e0vau7su5qbvs87lfqvod2r0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.mycompany.socialmediaapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
