@@ -11,6 +11,7 @@ import 'package:social_media_app/features/posts/presentation/cubit/post_cubit.da
 import 'package:social_media_app/features/posts/presentation/cubit/post_state.dart';
 import 'package:social_media_app/features/profile/domain/cubit/profile_cubit.dart';
 import 'package:social_media_app/features/profile/domain/profie_user.dart';
+import 'package:social_media_app/features/profile/presentation/pages/profile_page.dart';
 
 class PostTile extends StatefulWidget {
   final Post post;
@@ -135,47 +136,50 @@ class _PostTileState extends State<PostTile> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                postUser?.profileImageUrl != null
-                    ? CachedNetworkImage(
-                        imageUrl: postUser!.profileImageUrl,
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.person),
-                        imageBuilder: (context, imageProvider) => Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                                image: imageProvider, fit: BoxFit.cover),
+          GestureDetector(
+            onTap: () => Navigator.push(context,MaterialPageRoute(builder: (context) => ProfilePage(uid: widget.post.userId),)),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  postUser?.profileImageUrl != null
+                      ? CachedNetworkImage(
+                          imageUrl: postUser!.profileImageUrl,
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.person),
+                          imageBuilder: (context, imageProvider) => Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                  image: imageProvider, fit: BoxFit.cover),
+                            ),
                           ),
-                        ),
-                      )
-                    : const Icon(Icons.person),
-                const SizedBox(
-                  width: 10,
-                ),
-                Expanded(
-                  child: Text(
-                    widget.post.userName,
-                    style: const TextStyle(
-                      color: (Colors.black45),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
+                        )
+                      : const Icon(Icons.person),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    child: Text(
+                      widget.post.userName,
+                      style: const TextStyle(
+                        color: (Colors.black45),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
                     ),
                   ),
-                ),
-                if (isOwnPost)
-                  GestureDetector(
-                    onTap: widget.onDeltePressed,
-                    child: Icon(Icons.delete,
-                        color: Theme.of(context).colorScheme.primary),
-                  )
-              ],
+                  if (isOwnPost)
+                    GestureDetector(
+                      onTap: widget.onDeltePressed,
+                      child: Icon(Icons.delete,
+                          color: Theme.of(context).colorScheme.primary),
+                    )
+                ],
+              ),
             ),
           ),
           Padding(

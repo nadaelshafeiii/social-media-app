@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:social_media_app/features/Home/presentation/components/post_tile.dart';
 import 'package:social_media_app/features/Home/presentation/components/profile_stats.dart';
 import 'package:social_media_app/features/auth/domain/entities/app_user.dart';
 import 'package:social_media_app/features/auth/presentation/cubits/auth_cubit.dart';
+import 'package:social_media_app/features/posts/presentation/cubit/post_cubit.dart';
+import 'package:social_media_app/features/posts/presentation/cubit/post_state.dart';
 import 'package:social_media_app/features/profile/domain/cubit/profile_cubit.dart';
 import 'package:social_media_app/features/profile/domain/cubit/profile_states.dart';
 import 'package:social_media_app/features/profile/presentation/components/bio_box.dart';
@@ -25,6 +28,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // Current user
   late AppUser? currentUser = authCubit.currentUser;
+
+  //posts
+  int postCount = 0;
 
   @override
   void initState() {
@@ -62,7 +68,6 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     bool isOwnPost = widget.uid == currentUser!.uid;
-
     return BlocBuilder<ProfileCubit, ProfileState>(builder: (context, state) {
       if (state is ProfileLoaded) {
         final user = state.profileUser;
@@ -82,74 +87,112 @@ class _ProfilePageState extends State<ProfilePage> {
                     icon: const Icon(Icons.settings))
             ],
           ),
-          body: Column(
-            children: [
-              Text(
-                user.email,
-                style: TextStyle(color: Theme.of(context).colorScheme.primary),
-              ),
-              const SizedBox(
-                height: 25,
-              ),
-              // Profile image from Firebase (using CachedNetworkImage)
-              Container(
-                decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.secondary,
-                    borderRadius: BorderRadius.circular(12)),
-                height: 120,
-                width: 120,
-                padding: const EdgeInsets.all(25),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: CachedNetworkImage(
-                    imageUrl: user.profileImageUrl, // Profile image URL from Firebase
-                    placeholder: (context, url) => const CircularProgressIndicator(),
-                    errorWidget: (context, url, error) => const Icon(Icons.error),
-                    fit: BoxFit.cover,
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                Text(
+                  user.email,
+                  style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                ),
+                const SizedBox(
+                  height: 25,
+                ),
+                // Profile image from Firebase (using CachedNetworkImage)
+                Container(
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.secondary,
+                      borderRadius: BorderRadius.circular(12)),
+                  height: 120,
+                  width: 120,
+                  padding: const EdgeInsets.all(25),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: CachedNetworkImage(
+                      imageUrl:
+                          user.profileImageUrl, // Profile image URL from Firebase
+                      placeholder: (context, url) =>
+                          const CircularProgressIndicator(),
+                      errorWidget: (context, url, error) =>
+                          const Icon(Icons.person),
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(
-                height: 25,
-              ),
-              ProfileStats(
-                  followerCount: user.followers.length,
-                  followingCount: user.following.length,
-                  postCount: 0),
-              if (!isOwnPost)
-                FollowButton(
-                  isFollowing: user.followers.contains(currentUser!.uid),
-                  onPressed: followButtonPressed,
+                const SizedBox(
+                  height: 25,
                 ),
-              Padding(
-                padding: const EdgeInsets.only(left: 25.0),
-                child: Row(
-                  children: [
-                    Text(
-                      'Bio',
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary),
-                    ),
-                  ],
+                ProfileStats(
+                    followerCount: user.followers.length,
+                    followingCount: user.following.length,
+                    postCount: 0),
+                if (!isOwnPost)
+                  FollowButton(
+                    isFollowing: user.followers.contains(currentUser!.uid),
+                    onPressed: followButtonPressed,
+                  ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 25.0),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Bio',
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(
-                height: 25,
-              ),
-              BioBox(text: user.bio),
-              Padding(
-                padding: const EdgeInsets.only(left: 25.0, top: 25.0),
-                child: Row(
-                  children: [
-                    Text(
-                      'Posts',
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary),
-                    ),
-                  ],
+                const SizedBox(
+                  height: 25,
                 ),
-              ),
-            ],
+                BioBox(text: user.bio),
+                Padding(
+                  padding: const EdgeInsets.only(left: 25.0, top: 25.0),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Posts',
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary),
+                      ),
+                    ],
+                  ),
+                ),
+            
+                BlocBuilder<PostCubit, PostState>(
+                  builder: (context, state) {
+                    if (state is PostLoaded) {
+                      final userPosts = state.posts
+                          .where(
+                            (post) => post.userId == widget.uid,
+                          )
+                          .toList();
+            
+                      postCount = userPosts.length;
+            
+                      return ListView.builder(
+                        itemCount: postCount,
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          final post = userPosts[index];
+            
+                          return PostTile(
+                            post: post,
+                            onDeltePressed: () =>
+                                context.read<PostCubit>().deletePost(post.id),
+                          );
+                        },
+                      );
+                    } else if (state is PostLoading) {
+                      return const CircularProgressIndicator();
+                    } else {
+                      return Text('No posts');
+                    }
+                  },
+                )
+              ],
+            ),
           ),
         );
       } else if (state is Profileloading) {

@@ -12,9 +12,8 @@ import 'package:social_media_app/features/profile/domain/cubit/profile_cubit.dar
 import 'package:social_media_app/features/search/data/firebase_search.dart';
 import 'package:social_media_app/features/search/presentation/cubits/search_cubit.dart';
 import 'package:social_media_app/features/storage/data/firebase_storage_repo.dart';
-import 'package:social_media_app/features/theme/light_mode.dart';
+import 'package:social_media_app/features/theme/dark_mode.dart';
 
-// lib/app.dart
 
 class MyApp extends StatelessWidget {
   final authRepo = FirebaseAuthRepo();
@@ -33,7 +32,7 @@ class MyApp extends StatelessWidget {
           create: (context) => AuthCubit(authRepo: authRepo)..checkAuth(),
         ),
         BlocProvider<ProfileCubit>(
-          create: (context) => ProfileCubit(profileRepo: profileRepo),
+          create: (context) => ProfileCubit(profileRepo: profileRepo, storageRepo: firebaseStorageRepo, postRepo:firebasePostRepo ),
         ),
         BlocProvider<PostCubit>(
           create: (context) => PostCubit(postRepo: firebasePostRepo,), 
@@ -44,7 +43,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: lightMode,
+        theme: darkTheme,
         home: BlocConsumer<AuthCubit, AuthState>(
           builder: (context, authState) {
             if (authState is Unauthenticated) {
@@ -52,7 +51,7 @@ class MyApp extends StatelessWidget {
             }
 
             if (authState is Authenticated) {
-              return HomePage();
+              return const HomePage();
             } else {
               return const Scaffold(
                 body: Center(
